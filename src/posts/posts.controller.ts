@@ -21,7 +21,7 @@ import { PostsService } from './posts.service';
     },
   },
   routes: {
-    only: ['getOneBase', 'getManyBase'],
+    only: ['getOneBase', 'getManyBase', 'deleteOneBase'],
   },
 })
 @Controller('posts')

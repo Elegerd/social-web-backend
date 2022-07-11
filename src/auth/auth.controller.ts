@@ -1,6 +1,6 @@
 import { Controller, Get, Post, UseGuards, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 import { Users } from 'src/users/users.entity';
 import { AuthService } from 'src/auth/auth.service';
@@ -25,6 +25,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @Get('me')
   getProfile(@User() user: Users) {
     return user;
