@@ -25,7 +25,7 @@ export class UsersService extends TypeOrmCrudService<Users> {
 
   async findOneById(id: number): Promise<Users> {
     try {
-      const user = await this.usersRepository.findOne({
+      const user = await this.usersRepository.findOneOrFail({
         where: {
           id,
         },

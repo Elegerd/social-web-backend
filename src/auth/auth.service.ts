@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   async signIn(user: Users): Promise<{ access_token: string; user: Users }> {
-    const token = await this.createAuthToken(user);
+    const token = this.createAuthToken(user);
 
     return { access_token: token, user };
   }
