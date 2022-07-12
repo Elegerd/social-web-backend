@@ -9,13 +9,6 @@ import { UsersService } from './users.service';
   model: {
     type: Users,
   },
-  params: {
-    id: {
-      type: 'uuid',
-      primary: true,
-      field: 'id',
-    },
-  },
   routes: {
     only: ['getOneBase', 'getManyBase'],
   },

@@ -13,13 +13,6 @@ import { PostsService } from './posts.service';
   model: {
     type: Posts,
   },
-  params: {
-    id: {
-      type: 'uuid',
-      primary: true,
-      field: 'id',
-    },
-  },
   routes: {
     only: ['getOneBase', 'getManyBase', 'deleteOneBase'],
   },
