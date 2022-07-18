@@ -38,3 +38,5 @@ export const MINUTES_IN_MS = SECOND_IN_MS * 60;
 export const HOUR_IN_MS = MINUTES_IN_MS * 60;
 export const DAY_IN_MS = HOUR_IN_MS * 24;
 export const WEEK_IN_MS = DAY_IN_MS * 7;
+
+export const ERROR_MESSAGE = 'Что-то пошло не так, попробуйте еще раз';

@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 import { Users } from 'src/users/users.entity';
+import { ERROR_MESSAGE } from 'src/constants';
 import { Posts } from './posts.entity';
 import { PostDto } from './posts.dto';
 
@@ -22,8 +23,11 @@ export class PostsService extends TypeOrmCrudService<Posts> {
         ...postDto,
         userId: user.id,
       });
-    } catch {
-      throw new BadRequestException('Что-то пошло не так, попробуйте еще раз');
+    } catch (e) {
+      throw new UnprocessableEntityException({
+        message: ERROR_MESSAGE,
+        error: (e as Error).message,
+      });
     }
   }
 }

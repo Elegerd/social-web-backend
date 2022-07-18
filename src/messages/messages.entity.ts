@@ -11,9 +11,10 @@ import {
 import { instanceToPlain } from 'class-transformer';
 
 import { Users } from 'src/users/users.entity';
+import { Conversations } from 'src/conversations/conversations.entity';
 
 @Entity()
-export class Posts {
+export class Messages {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,13 +23,23 @@ export class Posts {
   @Column({ type: 'text' })
   text: string;
 
-  @ManyToOne(() => Users, (user) => user.posts, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: Users;
+  @ManyToOne(() => Users, (user) => user.sentMessages, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'authorId' })
+  author: Users;
 
   @ApiProperty()
   @Column({ type: 'number' })
-  userId: Users['id'];
+  authorId: Users['id'];
+
+  @ManyToOne(() => Conversations, (conversation) => conversation.messages, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'conversationId' })
+  conversation: Conversations;
+
+  @ApiProperty()
+  @Column({ type: 'number' })
+  conversationId: Conversations['id'];
 
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })

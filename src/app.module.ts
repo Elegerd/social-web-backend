@@ -8,6 +8,8 @@ import { jwtConstants } from './auth/constants';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
+import { MessagesModule } from './messages/messages.module';
+import { ConversationsModule } from './conversations/conversations.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { PostsModule } from './posts/posts.module';
     AuthModule,
     UsersModule,
     PostsModule,
+    MessagesModule,
+    ConversationsModule,
   ],
   controllers: [AppController],
   providers: [],

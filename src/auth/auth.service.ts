@@ -1,10 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { SignUpDto } from 'src/auth/auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { Users } from 'src/users/users.entity';
+import { ERROR_MESSAGE } from 'src/constants';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,11 @@ export class AuthService {
     return isValid ? user : null;
   }
 
+  createAuthToken(user: Users): string {
+    const payload = { email: user.email, sub: user.id };
+    return this.jwtService.sign(payload);
+  }
+
   async signUp(userDto: SignUpDto) {
     try {
       const hash = await bcrypt.hash(userDto.password, 10);
@@ -31,19 +37,24 @@ export class AuthService {
         password: hash,
       });
       return;
-    } catch {
-      throw new BadRequestException('Что-то пошло не так, попробуйте еще раз');
+    } catch (e) {
+      throw new UnprocessableEntityException({
+        message: ERROR_MESSAGE,
+        error: (e as Error).message,
+      });
     }
   }
 
-  createAuthToken(user: Users): string {
-    const payload = { email: user.email, sub: user.id };
-    return this.jwtService.sign(payload);
-  }
-
   async signIn(user: Users): Promise<{ access_token: string; user: Users }> {
-    const token = this.createAuthToken(user);
+    try {
+      const token = this.createAuthToken(user);
 
-    return { access_token: token, user };
+      return { access_token: token, user };
+    } catch (e) {
+      throw new UnprocessableEntityException({
+        message: ERROR_MESSAGE,
+        error: (e as Error).message,
+      });
+    }
   }
 }

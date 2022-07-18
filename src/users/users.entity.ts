@@ -11,6 +11,7 @@ import {
 import { instanceToPlain, Exclude } from 'class-transformer';
 
 import { Posts } from 'src/posts/posts.entity';
+import { Messages } from 'src/messages/messages.entity';
 
 @Entity()
 export class Users {
@@ -39,8 +40,11 @@ export class Users {
   @Exclude({ toPlainOnly: true })
   password: string;
 
-  @OneToMany(() => Posts, (post) => post.user)
+  @OneToMany(() => Posts, (post) => post.user, { cascade: true })
   posts?: Posts[];
+
+  @OneToMany(() => Messages, (post) => post.author, { cascade: true })
+  sentMessages?: Posts[];
 
   @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
