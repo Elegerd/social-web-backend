@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Crud, CrudController } from '@nestjsx/crud';
+import { Crud, CrudAuth, CrudController } from '@nestjsx/crud';
 import { User } from 'src/common/decorators/user.decorator';
 import { Users } from 'src/users/users.entity';
 import { CreateMessagesDto } from './messages.dto';
@@ -28,7 +28,25 @@ import { MessagesService } from './messages.service';
       author: {
         eager: true,
       },
+      conversation: {
+        eager: true,
+        select: false,
+      },
+      'conversation.participants': {
+        eager: true,
+        select: false,
+      },
     },
+  },
+})
+@CrudAuth({
+  property: 'user',
+  filter: (user: Users) => {
+    return {
+      'conversation.participants.id': {
+        $in: [user.id],
+      },
+    };
   },
 })
 @ApiBearerAuth()

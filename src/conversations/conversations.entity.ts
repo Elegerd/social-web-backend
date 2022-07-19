@@ -40,16 +40,22 @@ export class Conversations {
   })
   messages: Messages[];
 
-  @OneToOne(() => Messages)
+  @OneToOne(() => Messages, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn()
   lastMessage: Messages;
 
+  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
+  @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @ApiProperty()
   @DeleteDateColumn()
   deletedAt: Date;
 }
