@@ -19,9 +19,15 @@ export class PostsService extends TypeOrmCrudService<Posts> {
 
   async createPost(user: Users, postDto: PostDto) {
     try {
-      return this.postsRepository.save({
+      const savedPost = await this.postsRepository.save({
         ...postDto,
         userId: user.id,
+      });
+      return this.postsRepository.findOneOrFail({
+        where: {
+          id: savedPost.id,
+        },
+        relations: ['user'],
       });
     } catch (e) {
       throw new UnprocessableEntityException({
