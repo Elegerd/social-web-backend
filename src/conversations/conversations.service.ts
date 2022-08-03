@@ -50,9 +50,32 @@ export class ConversationsService extends TypeOrmCrudService<Conversations> {
           id,
         })),
       });
-      return this.conversationsRepository.save({
+      const savedConversation = await this.conversationsRepository.save({
         id: null,
         participants,
+      });
+      return this.conversationsRepository.findOneOrFail({
+        where: {
+          id: savedConversation.id,
+        },
+        relations: ['participants', 'lastMessage'],
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException({
+        message: ERROR_MESSAGE,
+        error: (e as Error).message,
+      });
+    }
+  }
+
+  async getConversations(user: Users) {
+    try {
+      const conversations = await this.conversationsRepository.find({
+        relations: ['participants', 'lastMessage'],
+      });
+      return conversations.filter((conversation) => {
+        const participantIds = conversation.participants.map((p) => p.id);
+        return participantIds.includes(user.id);
       });
     } catch (e) {
       throw new UnprocessableEntityException({

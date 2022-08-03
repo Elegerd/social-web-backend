@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -21,7 +22,7 @@ import { ConversationsService } from './conversations.service';
     type: Conversations,
   },
   routes: {
-    only: ['getOneBase', 'getManyBase'],
+    only: ['getOneBase'],
   },
   query: {
     softDelete: true,
@@ -64,5 +65,18 @@ export class ConversationsController implements CrudController<Conversations> {
     @Body() body: CreateConversationsDto,
   ) {
     return this.service.createConversation(user, body);
+  }
+
+  @ApiResponse({
+    type: Conversations,
+    isArray: true,
+    status: HttpStatus.OK,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  @Get()
+  getConversations(@User() user: Users) {
+    return this.service.getConversations(user);
   }
 }

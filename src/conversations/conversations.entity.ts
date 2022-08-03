@@ -27,6 +27,7 @@ export class Conversations {
   @Column({ enum: CONVERSATION_STATUES, default: CONVERSATION_STATUES.ACTIVE })
   status: CONVERSATION_STATUES;
 
+  @ApiProperty({ type: () => Users, isArray: true })
   @ManyToMany(() => Users, { cascade: true })
   @JoinTable({
     name: 'conversation_use_participant',
@@ -40,6 +41,7 @@ export class Conversations {
   })
   messages: Messages[];
 
+  @ApiProperty({ type: () => Messages, nullable: true })
   @OneToOne(() => Messages, {
     nullable: true,
     onDelete: 'SET NULL',

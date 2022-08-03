@@ -21,16 +21,55 @@ export class MessagesService extends TypeOrmCrudService<Messages> {
 
   async createMessage(user: Users, createMessagesDto: CreateMessagesDto) {
     try {
-      const message = await this.messagesRepository.save({
+      const savedMessage = await this.messagesRepository.save({
         id: null,
         authorId: user.id,
         ...createMessagesDto,
+      });
+      const message = await this.messagesRepository.findOneOrFail({
+        where: {
+          id: savedMessage.id,
+        },
+        relations: ['author'],
       });
       await this.conversationsService.updateLastMessage(
         message.conversationId,
         message,
       );
       return message;
+    } catch (e) {
+      throw new UnprocessableEntityException({
+        message: ERROR_MESSAGE,
+        error: (e as Error).message,
+      });
+    }
+  }
+
+  async setLastMessage(conversationId: number) {
+    try {
+      const conversation = await this.conversationsService.findOne({
+        where: {
+          id: conversationId,
+        },
+        relations: ['lastMessage'],
+      });
+      if (!!conversation && !conversation.lastMessage) {
+        const messages = await this.messagesRepository.find({
+          where: {
+            conversationId,
+          },
+          order: {
+            createdAt: 'DESC',
+          },
+        });
+        if (messages.length) {
+          await this.conversationsService.updateLastMessage(
+            conversationId,
+            messages[0],
+          );
+        }
+      }
+      return;
     } catch (e) {
       throw new UnprocessableEntityException({
         message: ERROR_MESSAGE,

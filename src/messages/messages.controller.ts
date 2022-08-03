@@ -3,12 +3,20 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Crud, CrudAuth, CrudController } from '@nestjsx/crud';
+import {
+  Crud,
+  CrudAuth,
+  CrudController,
+  CrudRequest,
+  Override,
+  ParsedRequest,
+} from '@nestjsx/crud';
 import { User } from 'src/common/decorators/user.decorator';
 import { Users } from 'src/users/users.entity';
 import { CreateMessagesDto } from './messages.dto';
@@ -64,5 +72,20 @@ export class MessagesController implements CrudController<Messages> {
   @Post()
   createMessage(@User() user: Users, @Body() body: CreateMessagesDto) {
     return this.service.createMessage(user, body);
+  }
+
+  @Override('deleteOneBase')
+  async deleteMessage(
+    @ParsedRequest() req: CrudRequest,
+    @Param() params: { id: number },
+  ) {
+    const deletedMessage = await this.service.findOne({
+      where: {
+        id: params.id,
+      },
+    });
+    await this.service.deleteOne(req);
+    await this.service.setLastMessage(deletedMessage.conversationId);
+    return;
   }
 }
